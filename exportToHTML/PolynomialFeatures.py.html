@@ -1,0 +1,92 @@
+<html>
+<head>
+<title>PolynomialFeatures.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #8c8c8c; font-style: italic;}
+.s3 { color: #067d17;}
+.s4 { color: #1750eb;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+PolynomialFeatures.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">pandas </span><span class="s0">as </span><span class="s1">pd</span>
+<span class="s0">import </span><span class="s1">numpy </span><span class="s0">as </span><span class="s1">np</span>
+<span class="s0">from </span><span class="s1">sklearn.preprocessing </span><span class="s0">import </span><span class="s1">PolynomialFeatures</span>
+<span class="s0">from </span><span class="s1">sklearn.linear_model </span><span class="s0">import </span><span class="s1">LinearRegression</span>
+<span class="s0">from </span><span class="s1">sklearn.model_selection </span><span class="s0">import </span><span class="s1">train_test_split</span>
+<span class="s0">import </span><span class="s1">matplotlib.pyplot </span><span class="s0">as </span><span class="s1">plt</span>
+
+<span class="s0">from </span><span class="s1">sklearn.metrics </span><span class="s0">import </span><span class="s1">mean_squared_error  </span><span class="s2"># 均方误差MSE</span>
+<span class="s0">from </span><span class="s1">sklearn.metrics </span><span class="s0">import </span><span class="s1">mean_absolute_error  </span><span class="s2"># 平方绝对误差MAE</span>
+<span class="s0">from </span><span class="s1">sklearn.metrics </span><span class="s0">import </span><span class="s1">r2_score  </span><span class="s2"># R square R2</span>
+
+<span class="s2">#plt.rcParams['font.sans-serif'] = ['KaiTi']</span>
+<span class="s2">#plt.rcParams['axes.unicode_minus'] = False</span>
+<span class="s2"># 图片像素</span>
+<span class="s2"># plt.rcParams['savefig.dpi'] = 800</span>
+<span class="s2"># 分辨率</span>
+<span class="s2">#plt.rcParams['figure.dpi'] = 200</span>
+
+<span class="s1">file_path = </span><span class="s3">r'C:\Users\Administrator\Desktop\Four.csv'</span>
+
+<span class="s1">data = pd.read_csv(file_path)</span>
+<span class="s1">X = data.iloc[:, </span><span class="s4">1</span><span class="s1">:-</span><span class="s4">1</span><span class="s1">]</span>
+<span class="s1">y = data.iloc[:, -</span><span class="s4">1</span><span class="s1">]</span>
+
+<span class="s1">MSEs = []</span>
+<span class="s1">MAEs = []</span>
+<span class="s1">R2s = []</span>
+<span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(</span><span class="s4">10</span><span class="s1">):</span>
+    <span class="s1">x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=</span><span class="s4">0.2</span><span class="s1">)</span>
+
+    <span class="s1">ploy = PolynomialFeatures(degree=</span><span class="s4">2</span><span class="s1">)</span>
+    <span class="s1">X_train_new = ploy.fit_transform(x_train)</span>
+    <span class="s1">X_test_new = ploy.fit_transform(x_test)</span>
+    <span class="s1">liner_model = LinearRegression()</span>
+    <span class="s1">liner_model.fit(X_train_new, y_train)</span>
+    <span class="s1">y_predict = liner_model.predict(X_test_new)</span>
+
+   <span class="s2">#lr.fit(poly.fit_transform(X), y)</span>
+    <span class="s2"># 训练模型</span>
+    <span class="s2">#poly.fit(x_train, y_train)</span>
+    <span class="s2"># 预测</span>
+    <span class="s2">#y_predict = lr.predict(x_test)</span>
+
+    <span class="s1">MSE = mean_squared_error(y_test, y_predict)</span>
+    <span class="s1">MAE = mean_absolute_error(y_test, y_predict)</span>
+    <span class="s1">R2 = r2_score(y_test, y_predict)</span>
+    <span class="s1">MSEs.append(MSE)</span>
+    <span class="s1">MAEs.append(MAE)</span>
+    <span class="s1">R2s.append(R2)</span>
+<span class="s1">print(np.mean(MSEs))</span>
+<span class="s1">print(np.mean(MAEs))</span>
+<span class="s1">print(np.mean(R2s))</span>
+
+<span class="s2"># train = svc.score(x_train, y_train)</span>
+<span class="s2"># test = svc.score(x_test, y_test)</span>
+<span class="s2"># print(train)</span>
+<span class="s2"># print(test)</span>
+
+<span class="s2"># &quot;&quot;&quot;</span>
+<span class="s2"># plt.figure(figsize=(10,8))</span>
+<span class="s2"># plt.plot(range(1,len(y_predict)+1),y_predict ,label='predict')</span>
+<span class="s2"># plt.plot(range(1,len(y_predict)+1),y_test,label='ture')</span>
+<span class="s2"># for a, b in zip(range(1,len(y_predict)+1), y_predict):</span>
+<span class="s2">#     plt.text(a, b-0.5, b, ha='center', va='bottom')</span>
+<span class="s2"># for a, b in zip(range(1,len(y_predict)+1), y_test):</span>
+<span class="s2">#     plt.text(a, b+0.2, b, ha='center', va='bottom')</span>
+<span class="s2"># plt.title(&quot;Decision tree regression&quot;)</span>
+<span class="s2"># plt.xlabel(&quot;Molecule&quot;)</span>
+<span class="s2"># plt.ylabel(&quot;EQE Compare&quot;)</span>
+<span class="s2"># plt.legend()</span>
+<span class="s2"># plt.show()</span>
+<span class="s2"># &quot;&quot;&quot;</span></pre>
+</body>
+</html>
